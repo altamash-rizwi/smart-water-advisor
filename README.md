@@ -1,4 +1,5 @@
 # 💧 Smart Water Usage Advisor
+<<<<<<< HEAD
 ### AI for Sustainability · 1M1B × IBM SkillsBuild × AICTE
 **SDG 6: Clean Water & Sanitation · SDG 11: Sustainable Cities**
 
@@ -104,3 +105,21 @@ http://localhost:5000
 ## 👤 Author
 **Md Altamash Rizwi** · altushaikh076@gmail.com  
 B.Tech Computer Engineering · Aditya Silver Oak Institute Of Technology
+=======
+
+An AI-powered sustainability web application that analyzes household water consumption patterns and provides intelligent conservation recommendations using Machine Learning.
+
+Built with:
+- Python
+- Flask
+- scikit-learn
+- HTML/CSS/JavaScript
+- Chart.js
+
+Supports:
+- Water usage classification
+- Personalized AI recommendations
+- Savings estimation
+- Historical trend visualization
+- SDG 6 & SDG 11 sustainability goals
+>>>>>>> 97a8b952ccb5582b672717644fa12c46d5f3c76c

@@ -144,8 +144,29 @@ class WaterUsageAdvisor:
         Trains the AI model.
         Called once when the app starts.
         """
-        print("  [AI] Generating training data...")
-        X, y = self._generate_training_data()
+        print("  [AI] Loading real dataset...")
+
+        df = pd.read_csv("data/household_water_consumption.csv")
+
+        # Features
+        X = df[[
+            "Bathroom_Liters",
+            "Kitchen_Liters",
+            "Laundry_Liters",
+            "Gardening_Liters"
+        ]]
+
+        # Create categories
+        def classify_usage(total):
+            if total < 300:
+                return 0
+            elif total < 500:
+                return 1
+            elif total < 700:
+                return 2
+            return 3
+
+        y = df["Total_Liters"].apply(classify_usage)
 
         print("  [AI] Scaling features...")
         # StandardScaler: transforms each feature to have mean=0, std=1
@@ -184,9 +205,12 @@ class WaterUsageAdvisor:
                       laundry + dishes + gardening + car_wash)
         per_capita = total / people
 
-        return np.array([[drinking, cooking, bathing, toilet,
-                          laundry,  dishes,  gardening, car_wash,
-                          total, people, per_capita]])
+        return np.array([[
+            bathing,
+            cooking,
+            laundry,
+            gardening
+        ]])
 
     def analyze(self, data):
         """
@@ -204,9 +228,16 @@ class WaterUsageAdvisor:
 
         # Build feature array
         features = self._build_features(data)
-        total     = float(features[0][8])
-        people    = int(features[0][9])
-        per_cap   = float(features[0][10])
+        total = (
+             float(data.get("bathing", 80)) +
+             float(data.get("cooking", 6)) +
+             float(data.get("laundry", 40)) +
+             float(data.get("gardening", 20))
+         )
+
+        people = max(1, int(data.get("people", 1)))
+
+        per_cap = total / people
 
         # Scale features and predict
         features_scaled = self.scaler.transform(features)

@@ -150,23 +150,30 @@ class WaterUsageAdvisor:
 
         # Features
         X = df[[
-            "Bathroom_Liters",
-            "Kitchen_Liters",
-            "Laundry_Liters",
-            "Gardening_Liters"
-        ]]
+             "People",
+             "Drinking_Liters",
+             "Cooking_Liters",
+             "Bathroom_Liters",
+             "Toilet_Liters",
+             "Laundry_Liters",
+             "Dishwashing_Liters",
+             "Gardening_Liters",
+             "CarWash_Liters",
+             "Total_Liters",
+             "PerCapita_Liters"
+          ]]
 
         # Create categories
-        def classify_usage(total):
-            if total < 300:
-                return 0
-            elif total < 500:
-                return 1
-            elif total < 700:
-                return 2
-            return 3
+        def classify_usage(per_capita):
+         if per_capita < 90:
+             return 0      # Low
+         elif per_capita < 120:
+             return 1      # Moderate
+         elif per_capita < 150:
+             return 2      # High
+         return 3          # Critical
 
-        y = df["Total_Liters"].apply(classify_usage)
+        y = df["PerCapita_Liters"].apply(classify_usage)
 
         print("  [AI] Scaling features...")
         # StandardScaler: transforms each feature to have mean=0, std=1
@@ -206,11 +213,18 @@ class WaterUsageAdvisor:
         per_capita = total / people
 
         return np.array([[
-            bathing,
-            cooking,
-            laundry,
-            gardening
-        ]])
+             people,
+             drinking,
+             cooking,
+             bathing,
+             toilet,
+             laundry,
+             dishes,
+             gardening,
+             car_wash,
+             total,
+              per_capita 
+         ]])
 
     def analyze(self, data):
         """
@@ -229,10 +243,14 @@ class WaterUsageAdvisor:
         # Build feature array
         features = self._build_features(data)
         total = (
-             float(data.get("bathing", 80)) +
+             float(data.get("drinking", 3)) +
              float(data.get("cooking", 6)) +
+             float(data.get("bathing", 80)) +
+             float(data.get("toilet", 30)) +
              float(data.get("laundry", 40)) +
-             float(data.get("gardening", 20))
+             float(data.get("dishes", 15)) +
+             float(data.get("gardening", 20)) +
+             float(data.get("car_wash", 5))
          )
 
         people = max(1, int(data.get("people", 1)))
@@ -252,7 +270,7 @@ class WaterUsageAdvisor:
         print("Prediction probabilities:", pred_proba)
 
         # Usage score vs benchmark (lower is better but we show how over/under they are)
-        score = min(100, round((per_cap / self.daily_recommended) * 100))
+        score = min(100, round((per_cap / 120) * 100))
 
         # Generate per-activity breakdown
         breakdown = self._activity_breakdown(data, people)

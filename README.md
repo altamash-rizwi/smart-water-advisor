@@ -1,2 +1,17 @@
-# smart-water-advisor
-AI-powered Smart Water Usage Advisor built using Flask, Machine Learning, and Chart.js. Analyzes household water consumption, predicts usage category, and provides personalized conservation recommendations to support SDG 6 &amp; SDG 11 sustainability goals.
+# 💧 Smart Water Usage Advisor
+
+An AI-powered sustainability web application that analyzes household water consumption patterns and provides intelligent conservation recommendations using Machine Learning.
+
+Built with:
+- Python
+- Flask
+- scikit-learn
+- HTML/CSS/JavaScript
+- Chart.js
+
+Supports:
+- Water usage classification
+- Personalized AI recommendations
+- Savings estimation
+- Historical trend visualization
+- SDG 6 & SDG 11 sustainability goals

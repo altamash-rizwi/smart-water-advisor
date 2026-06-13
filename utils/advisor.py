@@ -242,10 +242,14 @@ class WaterUsageAdvisor:
         # Scale features and predict
         features_scaled = self.scaler.transform(features)
         pred_label      = int(self.model.predict(features_scaled)[0])
+        if pred_label >= len(self.categories):
+             pred_label = len(self.categories) - 1
         pred_proba      = self.model.predict_proba(features_scaled)[0]
 
         # Confidence score (0–100)
-        confidence = round(float(pred_proba[pred_label]) * 100, 1)
+        confidence = round(float(max(pred_proba)) * 100, 1)
+        print("Model classes:", self.model.classes_)
+        print("Prediction probabilities:", pred_proba)
 
         # Usage score vs benchmark (lower is better but we show how over/under they are)
         score = min(100, round((per_cap / self.daily_recommended) * 100))
@@ -260,7 +264,7 @@ class WaterUsageAdvisor:
         savings = self._estimate_savings(total, pred_label, people)
 
         return {
-            "category":        self.categories[pred_label],
+            "category": self.categories[min(pred_label, len(self.categories)-1)],
             "category_index":  pred_label,
             "confidence":      confidence,
             "total_liters":    round(total, 1),

@@ -1,0 +1,20 @@
+# ====================================================
+#   Smart Water Usage Advisor — Python Dependencies
+# ====================================================
+#
+# HOW TO INSTALL:
+#   pip install -r requirements.txt
+#
+# Each package explained:
+#
+#   flask       — Web framework that serves pages and handles API requests
+#   pandas      — Data manipulation (DataFrames, CSV reading)
+#   numpy       — Fast numerical arrays and math operations
+#   scikit-learn— Machine learning library (Random Forest, StandardScaler)
+#   joblib      — Saves/loads trained ML models to disk
+
+flask>=3.0.0
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+joblib>=1.3.0

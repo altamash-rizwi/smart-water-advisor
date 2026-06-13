@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Water Usage Advisor</title>
+
+  <!-- Chart.js — for drawing the usage trend chart -->
+  <!-- Loaded from a CDN (Content Delivery Network) so no local install needed -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Our custom CSS styles -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER / NAVBAR
+     ══════════════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">💧</span>
+      <div>
+        <h1 class="brand-title">Smart Water Usage Advisor</h1>
+        <p class="brand-sub">AI for Sustainability · SDG 6 &amp; SDG 11</p>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-teal">1M1B</span>
+      <span class="badge badge-navy">IBM SkillsBuild</span>
+      <span class="badge badge-teal">AICTE</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ══════════════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- ── INTRO BANNER ─────────────────────────────────────── -->
+  <section class="intro-banner">
+    <div class="intro-stats">
+      <div class="stat-card">
+        <span class="stat-num">2.2B</span>
+        <span class="stat-label">People lack safe water</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">40%</span>
+        <span class="stat-label">Face water scarcity</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">25–30%</span>
+        <span class="stat-label">Saved by smart monitoring</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">50%</span>
+        <span class="stat-label">Faster leak detection with AI</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TWO-COLUMN LAYOUT ─────────────────────────────────── -->
+  <div class="layout">
+
+    <!-- LEFT: Input Form -->
+    <section class="card form-card">
+      <div class="card-header">
+        <h2>📋 Enter Your Daily Water Usage</h2>
+        <p>Enter approximate liters used per day for each activity.</p>
+      </div>
+
+      <!-- People count -->
+      <div class="form-group full-width">
+        <label for="people">👨‍👩‍👧‍👦 Number of People in Household</label>
+        <input type="number" id="people" min="1" max="20" value="1"
+               placeholder="e.g. 4" />
+      </div>
+
+      <!-- Activity inputs — each represents liters/day -->
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="drinking">💧 Drinking Water (L)</label>
+          <input type="number" id="drinking" min="0" step="0.5" value="3"
+                 placeholder="e.g. 3" />
+          <small>Benchmark: ~3 L/person/day</small>
+        </div>
+
+        <div class="form-group">
+          <label for="cooking">🍳 Cooking (L)</label>
+          <input type="number" id="cooking" min="0" step="0.5" value="6"
+                 placeholder="e.g. 6" />
+          <small>Benchmark: ~6 L/day</small>
+        </div>
+
+        <div class="form-group">
+          <label for="bathing">🚿 Bathing / Shower (L)</label>
+          <input type="number" id="bathing" min="0" step="1" value="80"
+                 placeholder="e.g. 80" />
+          <small>Benchmark: ~80 L/day (household)</small>
+        </div>
+
+        <div class="form-group">
+          <label for="toilet">🚽 Toilet Flushing (L)</label>
+          <input type="number" id="toilet" min="0" step="1" value="30"
+                 placeholder="e.g. 30" />
+          <small>Benchmark: ~30 L/day</small>
+        </div>
+
+        <div class="form-group">
+          <label for="laundry">👕 Laundry (L)</label>
+          <input type="number" id="laundry" min="0" step="1" value="40"
+                 placeholder="e.g. 40" />
+          <small>Benchmark: ~40 L/load</small>
+        </div>
+
+        <div class="form-group">
+          <label for="dishes">🍽️ Dishwashing (L)</label>
+          <input type="number" id="dishes" min="0" step="1" value="15"
+                 placeholder="e.g. 15" />
+          <small>Benchmark: ~15 L/day</small>
+        </div>
+
+        <div class="form-group">
+          <label for="gardening">🌱 Gardening (L)</label>
+          <input type="number" id="gardening" min="0" step="1" value="20"
+                 placeholder="e.g. 20" />
+          <small>Benchmark: ~20 L/day</small>
+        </div>
+
+        <div class="form-group">
+          <label for="car_wash">🚗 Car Washing (L)</label>
+          <input type="number" id="car_wash" min="0" step="1" value="5"
+                 placeholder="e.g. 5" />
+          <small>Benchmark: ~5 L/day (amortized)</small>
+        </div>
+
+      </div><!-- /.form-grid -->
+
+      <!-- Action Buttons -->
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="analyzeUsage()">
+          🔍 Analyze My Usage
+        </button>
+        <button class="btn btn-secondary" onclick="loadSampleData()">
+          📦 Load Sample Data
+        </button>
+        <button class="btn btn-ghost" onclick="resetForm()">
+          🔄 Reset
+        </button>
+      </div>
+
+      <!-- Loading spinner (hidden by default) -->
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <span>Analyzing with AI...</span>
+      </div>
+
+    </section><!-- /.form-card -->
+
+    <!-- RIGHT: Results Panel -->
+    <section id="results" class="card results-card hidden">
+
+      <!-- Usage Category Badge -->
+      <div id="category-banner" class="category-banner">
+        <div class="category-icon" id="category-icon">💧</div>
+        <div>
+          <div class="category-label">Usage Level</div>
+          <div class="category-value" id="category-value">—</div>
+        </div>
+        <div class="category-stats">
+          <div class="mini-stat">
+            <span id="total-liters">—</span>
+            <label>Total L/day</label>
+          </div>
+          <div class="mini-stat">
+            <span id="per-capita">—</span>
+            <label>L/person</label>
+          </div>
+          <div class="mini-stat">
+            <span id="benchmark-val">199</span>
+            <label>Benchmark</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Usage Score Bar -->
+      <div class="score-section">
+        <div class="score-label">Usage Score vs. Benchmark</div>
+        <div class="progress-track">
+          <div class="progress-bar" id="score-bar"></div>
+        </div>
+        <div class="score-ticks">
+          <span>0</span><span>50</span><span>100</span><span>150+</span>
+        </div>
+      </div>
+
+      <!-- Activity Breakdown -->
+      <div class="section-title">📊 Activity Breakdown</div>
+      <div id="breakdown-list" class="breakdown-list"></div>
+
+      <!-- Recommendations -->
+      <div class="section-title">💡 AI Recommendations</div>
+      <div id="recommendations-list" class="recs-list"></div>
+
+      <!-- Savings Estimate -->
+      <div class="section-title">💰 Potential Savings</div>
+      <div id="savings-cards" class="savings-grid"></div>
+
+    </section><!-- /#results -->
+
+  </div><!-- /.layout -->
+
+  <!-- ── TREND CHART ───────────────────────────────────────── -->
+  <section class="card chart-card">
+    <div class="card-header">
+      <h2>📈 30-Day Usage Trend</h2>
+      <p>Simulated historical data — shows how awareness reduces consumption over time.</p>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="trendChart"></canvas>
+    </div>
+  </section>
+
+  <!-- ── SDG FOOTER CARDS ──────────────────────────────────── -->
+  <section class="sdg-section">
+    <div class="sdg-card sdg-6">
+      <div class="sdg-num">SDG 6</div>
+      <div class="sdg-title">Clean Water &amp; Sanitation</div>
+      <p>Ensure availability and sustainable management of water for all.</p>
+    </div>
+    <div class="sdg-card sdg-11">
+      <div class="sdg-num">SDG 11</div>
+      <div class="sdg-title">Sustainable Cities &amp; Communities</div>
+      <p>Make cities inclusive, safe, resilient and sustainable.</p>
+    </div>
+  </section>
+
+</main><!-- /.main -->
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <p>Smart Water Usage Advisor &nbsp;·&nbsp; AI for Sustainability &nbsp;·&nbsp;
+     1M1B × IBM SkillsBuild × AICTE &nbsp;·&nbsp;
+     Md Altamash Rizwi &nbsp;·&nbsp; B.Tech Computer Engineering &nbsp;·&nbsp;
+     Aditya Silver Oak Institute Of Technology</p>
+</footer>
+
+<!-- Our custom JavaScript logic -->
+<script src="/static/js/app.js"></script>
+
+<!-- Load the trend chart on page load -->
+<script>
+  // Fetch historical trend data from Flask and draw the chart
+  fetch("/history")
+    .then(res => res.json())
+    .then(data => drawTrendChart(data));
+</script>
+
+</body>
+</html>
